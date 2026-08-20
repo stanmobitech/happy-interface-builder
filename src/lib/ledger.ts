@@ -88,9 +88,10 @@ export async function addReport(input: {
 export async function verifyChain(): Promise<{ valid: boolean; blocks: number; brokenAt?: number }> {
   const chain = getChain();
   for (let i = 1; i < chain.length; i++) {
-    const b = chain[i];
+    const b = chain[i]!;
+    const prev = chain[i - 1]!;
     const expected = await sha256Hex(`${b.index}${b.timestamp}${b.reportId}${b.prevHash}`);
-    if (b.prevHash !== chain[i - 1].hash || expected !== b.hash) {
+    if (b.prevHash !== prev.hash || expected !== b.hash) {
       return { valid: false, blocks: chain.length, brokenAt: b.index };
     }
   }
